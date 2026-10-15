@@ -1,6 +1,8 @@
 import {
   BarChart3,
   BookOpen,
+  Grid2x2,
+  Home,
   LayoutDashboard,
   LogOut,
   Monitor,
@@ -30,14 +32,22 @@ const nav = [
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
 ];
 
+const mobileNav = [
+  { to: "/admin", end: true, label: "Home", icon: Home },
+  { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/staff", label: "Staff", icon: Users },
+  { to: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { to: "/admin/categories", label: "More", icon: Grid2x2 },
+];
+
 export function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100">
+    <div className="flex h-screen overflow-hidden bg-slate-100 pt-[env(safe-area-inset-top)]">
       <aside className="hidden w-60 flex-col border-r border-slate-200 bg-white md:flex">
-        <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5">
+        <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5 pt-[env(safe-area-inset-top)]">
           <div className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-sm font-bold text-white">PS</div>
           <div>
             <p className="text-sm font-semibold text-slate-800">POS Billing</p>
@@ -80,29 +90,52 @@ export function AdminLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 md:px-6">
-          <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-slate-800">Admin Portal</p>
-            <p className="hidden text-xs text-slate-400 sm:block">Manage products, staff, suppliers, billing and reports</p>
-          </div>
-          <div className="flex items-center gap-2">
+        <header className="flex h-16 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 md:px-6 min-w-0">
+          <div className="min-w-0 flex items-center gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-base font-semibold text-slate-800">Admin Portal</p>
+              <p className="hidden text-xs text-slate-400 sm:block">Manage products, staff, suppliers, billing and reports</p>
+            </div>
             <button
               className="hidden items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 md:inline-flex"
               onClick={() => navigate("/mobile")}
             >
               <Smartphone size={14} /> Mobile UI
             </button>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <button
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 whitespace-nowrap"
               onClick={() => navigate("/billing")}
             >
               <Monitor size={14} /> Billing
             </button>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-[80px] md:pb-0">
           <Outlet />
         </main>
+
+        <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white px-2 pb-[env(safe-area-inset-bottom)] pt-1 md:hidden">
+          {mobileNav.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-1 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition",
+                  isActive
+                    ? "bg-indigo-50 text-indigo-600"
+                    : "text-slate-500",
+                )
+              }
+            >
+              <item.icon size={20} />
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
       </div>
     </div>
   );

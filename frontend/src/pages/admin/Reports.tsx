@@ -62,7 +62,7 @@ export default function Reports() {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard label="Revenue" value={money(summary.total_revenue)} tone="green" />
         <StatCard label="Profit (est.)" value={money(summary.estimated_profit)} tone="blue" />
         <StatCard label="Stock value" value={money(summary.stock_value)} tone="indigo" />
@@ -72,7 +72,7 @@ export default function Reports() {
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader title="Daily sales" subtitle="Last 30 days" />
-          <div className="h-72 p-3">
+          <div className="h-64 sm:h-80 p-3">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={daily}>
                 <XAxis dataKey="date" tick={{ fontSize: 10 }} tickFormatter={(d) => String(d).slice(5)} />
@@ -86,7 +86,7 @@ export default function Reports() {
 
         <Card>
           <CardHeader title="Payment methods" />
-          <div className="h-72 p-3">
+          <div className="h-64 sm:h-80 p-3">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={payments} dataKey="total" nameKey="method" innerRadius={50} outerRadius={80} paddingAngle={3}>
@@ -105,20 +105,20 @@ export default function Reports() {
       <Card>
         <CardHeader title="Top products" subtitle="Best sellers by quantity and revenue" />
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px] text-left text-sm">
+          <table className="w-full min-w-full text-left text-xs sm:text-sm">
             <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
               <tr>
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3 text-right">Qty sold</th>
-                <th className="px-4 py-3 text-right">Revenue</th>
+                <th className="px-3 py-2 sm:px-4 sm:py-3">Product</th>
+                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell">Qty sold</th>
+                <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Revenue</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {top.map((item) => (
                 <tr key={item.name}>
-                  <td className="px-4 py-3 text-slate-700">{item.name}</td>
-                  <td className="px-4 py-3 text-right text-slate-500">{item.qty}</td>
-                  <td className="px-4 py-3 text-right font-medium text-slate-700">{money(item.revenue)}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-700">{item.name}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 text-right text-slate-500 hidden sm:table-cell">{item.qty}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(item.revenue)}</td>
                 </tr>
               ))}
             </tbody>

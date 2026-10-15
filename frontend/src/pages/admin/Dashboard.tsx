@@ -27,7 +27,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Total revenue" value={money(summary.total_revenue)} hint={`${summary.total_transactions} transactions`} icon={<Wallet size={18} />} tone="green" />
         <StatCard label="Today" value={money(summary.todays_revenue)} hint={`${summary.todays_transactions} sales today`} icon={<Receipt size={18} />} tone="indigo" />
         <StatCard label="Est. profit" value={money(summary.estimated_profit)} hint="Based on cost price" icon={<TrendingUp size={18} />} tone="blue" />
@@ -37,7 +37,7 @@ export default function Dashboard() {
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader title="Revenue trend" subtitle="Last 14 days" />
-          <div className="h-72 p-3">
+          <div className="h-64 sm:h-80 p-3">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={daily}>
                 <defs>

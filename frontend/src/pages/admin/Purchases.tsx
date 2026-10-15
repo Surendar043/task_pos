@@ -105,26 +105,26 @@ export default function Purchases() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">PO number</th>
-                  <th className="px-4 py-3">Supplier</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3 text-right">Items</th>
-                  <th className="px-4 py-3 text-right">Total</th>
-                  <th className="px-4 py-3">Status</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">PO number</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Supplier</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Date</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell">Items</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Total</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {purchases.map((purchase) => (
                   <tr key={purchase.id} className="cursor-pointer hover:bg-slate-50" onClick={() => setDetail(purchase)}>
-                    <td className="px-4 py-3 font-medium text-slate-800">{purchase.purchase_no}</td>
-                    <td className="px-4 py-3 text-slate-500">{purchase.supplier_name ?? "—"}</td>
-                    <td className="px-4 py-3 text-slate-500">{formatDate(purchase.created_at)}</td>
-                    <td className="px-4 py-3 text-right text-slate-500">{purchase.items.length}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">{money(purchase.total)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium text-slate-800">{purchase.purchase_no}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{purchase.supplier_name ?? "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500">{formatDate(purchase.created_at)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right text-slate-500 hidden sm:table-cell">{purchase.items.length}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(purchase.total)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">
                       <Badge tone={purchase.payment_status === "paid" ? "green" : "amber"}>{purchase.payment_status}</Badge>
                     </td>
                   </tr>

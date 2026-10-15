@@ -86,33 +86,33 @@ export default function Staff() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Username</th>
-                  <th className="px-4 py-3">Role</th>
-                  <th className="px-4 py-3">Phone</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Name</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Username</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Role</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Phone</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Status</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <p className="font-medium text-slate-800">{user.name}</p>
                       <p className="text-xs text-slate-400">{user.email || user.username}</p>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{user.username}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500">{user.username}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <Badge tone={user.role === "admin" ? "indigo" : "slate"}>{user.role}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{user.phone || "—"}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500">{user.phone || "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <Badge tone={user.active ? "green" : "red"}>{user.active ? "Active" : "Disabled"}</Badge>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <div className="flex justify-end gap-1">
                         <Button variant="ghost" size="sm" onClick={() => openEdit(user)}>
                           <Pencil size={15} />

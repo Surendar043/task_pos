@@ -42,7 +42,7 @@ export function BillingLayout() {
           </button>
         </div>
       </header>
-      <div className="flex items-center gap-1 border-b border-slate-200 bg-white px-4 md:px-6">
+      <div className="flex overflow-x-auto items-center gap-1 border-b border-slate-200 bg-white px-4 md:px-6 scrollbar-hide">
         {tabs.map((tab) => (
           <NavLink
             key={tab.to}

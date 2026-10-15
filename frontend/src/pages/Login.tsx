@@ -4,11 +4,6 @@ import { apiErrorMessage } from "../api";
 import { useAuth } from "../auth";
 import { Button, Field, Input, Select } from "../components/ui";
 
-const demoAccounts = [
-  { label: "Admin", username: "admin@posshop.com", password: "Admin@123" },
-  { label: "Staff", username: "staff@posshop.com", password: "Staff@123" },
-];
-
 type Mode = "signin" | "signup";
 
 export default function Login() {
@@ -17,8 +12,8 @@ export default function Login() {
   const [mode, setMode] = useState<Mode>("signin");
 
   // Sign in state
-  const [username, setUsername] = useState("admin@posshop.com");
-  const [password, setPassword] = useState("Admin@123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   // Sign up state
   const [signUpName, setSignUpName] = useState("");
@@ -91,8 +86,8 @@ export default function Login() {
         <p className="text-xs text-slate-500">FastAPI · MongoDB · React · TypeScript</p>
       </div>
 
-      <div className="flex items-center justify-center bg-slate-100 p-6">
-        <div className="w-full max-w-sm space-y-5 rounded-2xl bg-white p-8 shadow-sm">
+      <div className="flex items-center justify-center bg-slate-100 px-4 pb-4 sm:p-6 pb-[calc(100vh_-_100dvh_-_env(safe-area-inset-bottom))] sm:pb-[env(safe-area-inset-bottom)]">
+        <div className="w-full max-w-sm space-y-5 rounded-2xl bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex gap-2 rounded-lg bg-slate-100 p-1">
             <button
               type="button"
@@ -129,26 +124,6 @@ export default function Login() {
               <Button type="submit" className="w-full" disabled={busy}>
                 {busy ? "Signing in…" : "Sign in"}
               </Button>
-
-              <div className="space-y-2 rounded-lg bg-slate-50 p-3">
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Demo accounts</p>
-                <div className="flex gap-2">
-                  {demoAccounts.map((account) => (
-                    <button
-                      key={account.label}
-                      type="button"
-                      onClick={() => {
-                        setUsername(account.username);
-                        setPassword(account.password);
-                      }}
-                      className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-left text-xs hover:bg-white"
-                    >
-                      <span className="block font-semibold text-slate-700">{account.label}</span>
-                      <span className="text-slate-400">{account.username}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </form>
           ) : (
             <form onSubmit={submitSignUp} className="space-y-5">

@@ -66,7 +66,7 @@ export default function Ledger() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <Card className="p-4">
           <p className="text-xs uppercase text-slate-400">Total credit</p>
           <p className="text-lg font-semibold text-emerald-600">{money(totals.credit)}</p>
@@ -97,31 +97,31 @@ export default function Ledger() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Description</th>
-                  <th className="px-4 py-3 text-right">Debit</th>
-                  <th className="px-4 py-3 text-right">Credit</th>
-                  <th className="px-4 py-3 text-right">Balance</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Date</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Type</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Description</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell">Debit</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell">Credit</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {entries.map((entry) => (
                   <tr key={entry.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-slate-500">{formatDate(entry.date)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500">{formatDate(entry.date)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">
                       <Badge tone={typeTone[entry.type] ?? "slate"}>{entry.type}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-600">
                       {entry.description}
                       {entry.created_by_name && <span className="block text-xs text-slate-400">by {entry.created_by_name}</span>}
                     </td>
-                    <td className={cn("px-4 py-3 text-right", entry.debit ? "text-rose-600" : "text-slate-300")}>{entry.debit ? money(entry.debit) : "—"}</td>
-                    <td className={cn("px-4 py-3 text-right", entry.credit ? "text-emerald-600" : "text-slate-300")}>{entry.credit ? money(entry.credit) : "—"}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">{money(entry.balance)}</td>
+                    <td className={cn("px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell", entry.debit ? "text-rose-600" : "text-slate-300")}>{entry.debit ? money(entry.debit) : "—"}</td>
+                    <td className={cn("px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell", entry.credit ? "text-emerald-600" : "text-slate-300")}>{entry.credit ? money(entry.credit) : "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(entry.balance)}</td>
                   </tr>
                 ))}
                 {entries.length === 0 && (

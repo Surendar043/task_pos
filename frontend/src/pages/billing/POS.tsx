@@ -106,11 +106,11 @@ export default function POS() {
     <div className="flex h-full flex-col lg:flex-row">
       <section className="flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-slate-100">
         <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white p-3">
-          <div className="relative min-w-[200px] flex-1">
+          <div className="relative min-w-[160px] sm:min-w-[220px] flex-1">
             <ScanLine size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <Input
-              className="pl-9"
-              placeholder="Scan barcode or search product…"
+              className="pl-9 text-xs sm:text-sm"
+              placeholder="Scan or search…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={async (e) => {
@@ -126,7 +126,7 @@ export default function POS() {
               }}
             />
           </div>
-          <Select className="w-44" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+          <Select className="w-32 sm:w-44" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             <option value="">All categories</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -142,14 +142,14 @@ export default function POS() {
           ) : filtered.length === 0 ? (
             <EmptyState title="No products" description="Try a different search or category." />
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {filtered.map((product) => (
                 <button
                   key={product.id}
                   onClick={() => addToCart(product)}
                   disabled={product.stock_qty <= 0}
                   className={cn(
-                    "flex flex-col rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-indigo-400 hover:shadow-sm disabled:opacity-50",
+                    "flex flex-col min-h-[140px] rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-indigo-400 hover:shadow-sm disabled:opacity-50",
                   )}
                 >
                   <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-sm font-semibold text-indigo-600">
@@ -202,19 +202,19 @@ export default function POS() {
                   </div>
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1">
-                      <Button variant="secondary" size="sm" onClick={() => setQty(line, line.qty - 1)}>
-                        <Minus size={14} />
+                      <Button variant="secondary" size="md" onClick={() => setQty(line, line.qty - 1)}>
+                        <Minus size={16} />
                       </Button>
-                      <span className="w-8 text-center text-sm font-medium">{line.qty}</span>
-                      <Button variant="secondary" size="sm" onClick={() => setQty(line, line.qty + 1)}>
-                        <Plus size={14} />
+                      <span className="w-10 text-center text-sm font-medium">{line.qty}</span>
+                      <Button variant="secondary" size="md" onClick={() => setQty(line, line.qty + 1)}>
+                        <Plus size={16} />
                       </Button>
                     </div>
                     <span className="text-sm font-semibold text-slate-800">{money(line.qty * line.unitPrice - line.discount)}</span>
                   </div>
                   <div className="mt-2 flex items-center gap-2 text-xs text-slate-400">
                     <span>Discount</span>
-                    <Input className="h-7 w-20 text-xs" type="number" step="0.01" value={line.discount} onChange={(e) => setLineDiscount(line, Number(e.target.value))} />
+                    <Input className="h-10 w-24 text-sm" type="number" step="0.01" value={line.discount} onChange={(e) => setLineDiscount(line, Number(e.target.value))} />
                   </div>
                 </div>
               ))}
@@ -394,13 +394,13 @@ function PaymentModal({
           <p className="text-3xl font-semibold">{money(total)}</p>
         </div>
 
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {["cash", "card", "upi", "split"].map((option) => (
             <button
               key={option}
               onClick={() => setMethod(option)}
               className={cn(
-                "rounded-lg border px-2 py-2 text-sm font-medium capitalize",
+                "rounded-lg border px-2 py-3 text-sm font-medium capitalize",
                 method === option ? "border-indigo-600 bg-indigo-50 text-indigo-700" : "border-slate-200 text-slate-600",
               )}
             >
@@ -414,7 +414,7 @@ function PaymentModal({
             <Input type="number" step="0.01" value={amountPaid} onChange={(e) => setAmountPaid(Number(e.target.value))} />
             <div className="mt-2 flex flex-wrap gap-2">
               {[total, 500, 1000, 2000].map((quick, i) => (
-                <button key={i} onClick={() => setAmountPaid(quick)} className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-600">
+                <button key={i} onClick={() => setAmountPaid(quick)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600">
                   {money(quick)}
                 </button>
               ))}

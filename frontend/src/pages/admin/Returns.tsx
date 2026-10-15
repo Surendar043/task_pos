@@ -89,28 +89,28 @@ export default function Returns() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">Return no</th>
-                  <th className="px-4 py-3">Invoice</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Resolution</th>
-                  <th className="px-4 py-3 text-right">Refund</th>
-                  <th className="px-4 py-3">By</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Return no</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Invoice</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Date</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Resolution</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Refund</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">By</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {returns.map((ret) => (
                   <tr key={ret.id} className="cursor-pointer hover:bg-slate-50" onClick={() => setDetail(ret)}>
-                    <td className="px-4 py-3 font-medium text-slate-800">{ret.return_no}</td>
-                    <td className="px-4 py-3 text-slate-500">{ret.invoice_no ?? "—"}</td>
-                    <td className="px-4 py-3 text-slate-500">{formatDate(ret.created_at)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium text-slate-800">{ret.return_no}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{ret.invoice_no ?? "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500">{formatDate(ret.created_at)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">
                       <Badge tone={ret.resolution === "refund" ? "amber" : "blue"}>{ret.resolution}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">{money(ret.refund_amount)}</td>
-                    <td className="px-4 py-3 text-slate-500">{ret.processed_by_name ?? "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(ret.refund_amount)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{ret.processed_by_name ?? "—"}</td>
                   </tr>
                 ))}
                 {returns.length === 0 && (

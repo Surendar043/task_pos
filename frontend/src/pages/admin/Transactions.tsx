@@ -64,30 +64,30 @@ export default function Transactions() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">Invoice</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Cashier</th>
-                  <th className="px-4 py-3">Payment</th>
-                  <th className="px-4 py-3 text-right">Total</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">View</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Invoice</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Date</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Cashier</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Payment</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Total</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Status</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">View</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((sale) => (
                   <tr key={sale.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{sale.invoice_no}</td>
-                    <td className="px-4 py-3 text-slate-500">{formatDate(sale.created_at)}</td>
-                    <td className="px-4 py-3 text-slate-500">{sale.cashier_name ?? "—"}</td>
-                    <td className="px-4 py-3 capitalize text-slate-500">{sale.payment_method}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">{money(sale.total)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 font-medium text-slate-800">{sale.invoice_no}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{formatDate(sale.created_at)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{sale.cashier_name ?? "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 capitalize text-slate-500 hidden sm:table-cell">{sale.payment_method}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(sale.total)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">
                       <Badge tone={sale.status === "completed" ? "green" : sale.status === "returned" ? "amber" : "red"}>{sale.status}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
                       <Button variant="ghost" size="sm" onClick={() => setDetail(sale)}>
                         <Eye size={15} />
                       </Button>

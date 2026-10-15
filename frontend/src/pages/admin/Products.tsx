@@ -115,38 +115,38 @@ export default function Products() {
           <Spinner />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-full text-left text-xs sm:text-sm">
               <thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
                 <tr>
-                  <th className="px-4 py-3">Product</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3 text-right">Cost</th>
-                  <th className="px-4 py-3 text-right">Price</th>
-                  <th className="px-4 py-3 text-right">Stock</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3">Product</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Category</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right hidden sm:table-cell">Cost</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Price</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Stock</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">Status</th>
+                  <th className="px-3 py-2 sm:px-4 sm:py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {products.map((product) => (
                   <tr key={product.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <p className="font-medium text-slate-800">{product.name}</p>
                       <p className="text-xs text-slate-400">{product.sku}{product.fabric ? ` · ${product.fabric}` : ""}</p>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{product.category_name ?? "—"}</td>
-                    <td className="px-4 py-3 text-right text-slate-500">{money(product.cost_price)}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-700">{money(product.selling_price)}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-slate-500 hidden sm:table-cell">{product.category_name ?? "—"}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right text-slate-500 hidden sm:table-cell">{money(product.cost_price)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right font-medium text-slate-700">{money(product.selling_price)}</td>
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 text-right">
                       <span className={cn("font-medium", product.stock_qty <= product.reorder_level ? "text-amber-600" : "text-slate-700")}>
                         {product.stock_qty}
                       </span>
                       {product.variants.length > 0 && <span className="ml-1 text-xs text-slate-400">({product.variants.length} var)</span>}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3 hidden sm:table-cell">
                       <Badge tone={product.active ? "green" : "slate"}>{product.active ? "Active" : "Inactive"}</Badge>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2 sm:px-4 sm:py-3">
                       <div className="flex justify-end gap-1">
                         <Button variant="ghost" size="sm" onClick={() => setStockTarget(product)} title="Adjust stock">
                           <Boxes size={15} />
