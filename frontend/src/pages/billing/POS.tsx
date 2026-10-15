@@ -51,17 +51,29 @@ export default function POS() {
       setMessage(`${product.name} is out of stock`);
       return;
     }
-    if (product.variants.length > 0 && !variantSku) {
-      setVariantProduct(product);
-      return;
+
+    // Resolve variant for products that have size/color variants.
+    // Auto-select the first in-stock variant so a single click adds to cart,
+    // matching the barcode-scan behaviour. If no variant has stock, report out of stock.
+    let resolvedSku = variantSku;
+    if (product.variants.length > 0 && !resolvedSku) {
+      const inStockVariant = product.variants.find((v) => (v.stock_qty ?? 0) > 0);
+      if (!inStockVariant) {
+        setMessage(`${product.name} is out of stock`);
+        return;
+      }
+      resolvedSku = inStockVariant.sku;
     }
-    const key = cartKey(product.id, variantSku);
+
+    const key = cartKey(product.id, resolvedSku);
     setCart((prev) => {
       const existing = prev.find((line) => cartKey(line.product.id, line.variantSku) === key);
       if (existing) {
-        return prev.map((line) => (cartKey(line.product.id, line.variantSku) === key ? { ...line, qty: line.qty + 1 } : line));
+        return prev.map((line) =>
+          cartKey(line.product.id, line.variantSku) === key ? { ...line, qty: line.qty + 1 } : line,
+        );
       }
-      return [...prev, { product, variantSku, qty: 1, unitPrice: product.selling_price, discount: 0 }];
+      return [...prev, { product, variantSku: resolvedSku, qty: 1, unitPrice: product.selling_price, discount: 0 }];
     });
     setMessage("");
   };
