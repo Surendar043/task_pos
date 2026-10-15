@@ -61,6 +61,16 @@ export function apiErrorMessage(error: unknown): string {
 export const authApi = {
   login: (username: string, password: string) =>
     api.post<{ access_token: string; token_type: string; user: User }>("/auth/login", { username, password }).then((r) => r.data),
+  signup: (data: { username: string; name: string; password: string; mobile: string; role: "admin" | "staff" }) =>
+    api
+      .post<{ access_token: string; token_type: string; user: User }>("/auth/signup", {
+        username: data.username,
+        name: data.name,
+        password: data.password,
+        mobile: data.mobile,
+        role: data.role,
+      })
+      .then((r) => r.data),
   me: () => api.get<User>("/auth/me").then((r) => r.data),
   changePassword: (current_password: string, new_password: string) =>
     api.post("/auth/change-password", { current_password, new_password }).then((r) => r.data),

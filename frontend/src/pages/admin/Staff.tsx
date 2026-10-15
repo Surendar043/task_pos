@@ -35,7 +35,7 @@ export default function Staff() {
 
   const openEdit = (user: User) => {
     setEditing(user);
-    setForm({ name: user.name, email: user.email, username: user.username, password: "", role: user.role, phone: user.phone ?? "", active: user.active });
+    setForm({ name: user.name, email: user.email ?? "", username: user.username, password: "", role: user.role, phone: user.phone ?? "", active: user.active });
     setShowForm(true);
   };
 
@@ -102,7 +102,7 @@ export default function Staff() {
                   <tr key={user.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
                       <p className="font-medium text-slate-800">{user.name}</p>
-                      <p className="text-xs text-slate-400">{user.email}</p>
+                      <p className="text-xs text-slate-400">{user.email || user.username}</p>
                     </td>
                     <td className="px-4 py-3 text-slate-500">{user.username}</td>
                     <td className="px-4 py-3">

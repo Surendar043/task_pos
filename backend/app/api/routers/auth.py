@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.user import User
-from app.schemas.auth import LoginRequest, TokenResponse
+from app.schemas.auth import LoginRequest, SignupRequest, TokenResponse
 from app.schemas.user import UserOut
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -17,6 +17,36 @@ async def login(payload: LoginRequest) -> TokenResponse:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     token = create_access_token(str(user.id), user.role)
     return TokenResponse(access_token=token, user=UserOut.model_validate(user))
+
+
+async def _create_signup_user(payload: SignupRequest) -> TokenResponse:
+    username = payload.username.strip().lower()
+    if not username:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username is required")
+
+    existing = await User.find_one(User.username == username)
+    if existing is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
+
+    role = payload.role if payload.role in ("admin", "staff") else "staff"
+    user = User(
+        name=payload.name.strip(),
+        username=username,
+        password_hash=hash_password(payload.password),
+        role=role,
+        phone=(payload.mobile or "").strip() or None,
+        active=True,
+    )
+    await user.insert()
+
+    token = create_access_token(str(user.id), user.role)
+    return TokenResponse(access_token=token, user=UserOut.model_validate(user))
+
+
+@router.post("/signup", response_model=TokenResponse)
+@router.post("/register", response_model=TokenResponse)
+async def signup(payload: SignupRequest) -> TokenResponse:
+    return await _create_signup_user(payload)
 
 
 @router.get("/me", response_model=UserOut)

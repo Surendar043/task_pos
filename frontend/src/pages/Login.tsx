@@ -2,22 +2,35 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiErrorMessage } from "../api";
 import { useAuth } from "../auth";
-import { Button, Field, Input } from "../components/ui";
+import { Button, Field, Input, Select } from "../components/ui";
 
 const demoAccounts = [
   { label: "Admin", username: "admin@posshop.com", password: "Admin@123" },
   { label: "Staff", username: "staff@posshop.com", password: "Staff@123" },
 ];
 
+type Mode = "signin" | "signup";
+
 export default function Login() {
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
+  const [mode, setMode] = useState<Mode>("signin");
+
+  // Sign in state
   const [username, setUsername] = useState("admin@posshop.com");
   const [password, setPassword] = useState("Admin@123");
+
+  // Sign up state
+  const [signUpName, setSignUpName] = useState("");
+  const [signUpUsername, setSignUpUsername] = useState("");
+  const [signUpMobile, setSignUpMobile] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpRole, setSignUpRole] = useState<"staff" | "admin">("staff");
+
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const submit = async (event: React.FormEvent) => {
+  const submitSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
     setError("");
     setBusy(true);
@@ -29,6 +42,31 @@ export default function Login() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const submitSignUp = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const user = await signup({
+        username: signUpUsername.trim(),
+        name: signUpName.trim(),
+        password: signUpPassword,
+        mobile: signUpMobile.trim(),
+        role: signUpRole,
+      });
+      navigate(user.role === "admin" ? "/admin" : "/billing", { replace: true });
+    } catch (err) {
+      setError(apiErrorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setError("");
   };
 
   return (
@@ -54,45 +92,110 @@ export default function Login() {
       </div>
 
       <div className="flex items-center justify-center bg-slate-100 p-6">
-        <form onSubmit={submit} className="w-full max-w-sm space-y-5 rounded-2xl bg-white p-8 shadow-sm">
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-slate-800">Sign in</h2>
-            <p className="text-sm text-slate-500">Use your store credentials to continue.</p>
+        <div className="w-full max-w-sm space-y-5 rounded-2xl bg-white p-8 shadow-sm">
+          <div className="flex gap-2 rounded-lg bg-slate-100 p-1">
+            <button
+              type="button"
+              onClick={() => switchMode("signin")}
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${mode === "signin" ? "bg-white shadow-sm text-slate-800" : "text-slate-500"}`}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={() => switchMode("signup")}
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${mode === "signup" ? "bg-white shadow-sm text-slate-800" : "text-slate-500"}`}
+            >
+              Sign up
+            </button>
           </div>
 
-          <Field label="Email or username">
-            <Input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus />
-          </Field>
-          <Field label="Password">
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
-          </Field>
+          {mode === "signin" ? (
+            <form onSubmit={submitSignIn} className="space-y-5">
+              <div className="space-y-1">
+                <h2 className="text-xl font-semibold text-slate-800">Sign in</h2>
+                <p className="text-sm text-slate-500">Use your store credentials to continue.</p>
+              </div>
 
-          {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</p>}
+              <Field label="Email or username">
+                <Input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus />
+              </Field>
+              <Field label="Password">
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+              </Field>
 
-          <Button type="submit" className="w-full" disabled={busy}>
-            {busy ? "Signing in…" : "Sign in"}
-          </Button>
+              {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</p>}
 
-          <div className="space-y-2 rounded-lg bg-slate-50 p-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Demo accounts</p>
-            <div className="flex gap-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.label}
-                  type="button"
-                  onClick={() => {
-                    setUsername(account.username);
-                    setPassword(account.password);
-                  }}
-                  className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-left text-xs hover:bg-white"
-                >
-                  <span className="block font-semibold text-slate-700">{account.label}</span>
-                  <span className="text-slate-400">{account.username}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </form>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {busy ? "Signing in…" : "Sign in"}
+              </Button>
+
+              <div className="space-y-2 rounded-lg bg-slate-50 p-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Demo accounts</p>
+                <div className="flex gap-2">
+                  {demoAccounts.map((account) => (
+                    <button
+                      key={account.label}
+                      type="button"
+                      onClick={() => {
+                        setUsername(account.username);
+                        setPassword(account.password);
+                      }}
+                      className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-left text-xs hover:bg-white"
+                    >
+                      <span className="block font-semibold text-slate-700">{account.label}</span>
+                      <span className="text-slate-400">{account.username}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={submitSignUp} className="space-y-5">
+              <div className="space-y-1">
+                <h2 className="text-xl font-semibold text-slate-800">Create account</h2>
+                <p className="text-sm text-slate-500">Sign up with your details to get started.</p>
+              </div>
+
+              <Field label="Name">
+                <Input value={signUpName} onChange={(e) => setSignUpName(e.target.value)} autoComplete="name" autoFocus required />
+              </Field>
+              <Field label="Username">
+                <Input value={signUpUsername} onChange={(e) => setSignUpUsername(e.target.value)} autoComplete="username" required />
+              </Field>
+              <Field label="Mobile number">
+                <Input
+                  value={signUpMobile}
+                  onChange={(e) => setSignUpMobile(e.target.value)}
+                  autoComplete="tel"
+                  inputMode="tel"
+                  required
+                />
+              </Field>
+              <Field label="Password">
+                <Input
+                  type="password"
+                  value={signUpPassword}
+                  onChange={(e) => setSignUpPassword(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                />
+              </Field>
+              <Field label="Role">
+                <Select value={signUpRole} onChange={(e) => setSignUpRole(e.target.value as "staff" | "admin")}>
+                  <option value="staff">Staff</option>
+                  <option value="admin">Admin</option>
+                </Select>
+              </Field>
+
+              {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</p>}
+
+              <Button type="submit" className="w-full" disabled={busy}>
+                {busy ? "Creating account…" : "Create account"}
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

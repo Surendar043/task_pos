@@ -20,19 +20,22 @@ async def list_users(
         users = [u for u in users if u.role == role]
     if search:
         term = search.lower()
-        users = [u for u in users if term in u.name.lower() or term in u.email.lower() or term in u.username.lower()]
+        users = [u for u in users if term in u.name.lower() or term in (u.email or "").lower() or term in u.username.lower()]
     users.sort(key=lambda u: u.created_at, reverse=True)
     return users
 
 
 @router.post("", response_model=UserOut, status_code=201)
 async def create_user(payload: UserCreate, _: User = Depends(require_admin)) -> User:
-    exists = await User.find_one({"$or": [{"email": payload.email.lower()}, {"username": payload.username.lower()}]})
+    checks: list[dict] = [{"username": payload.username.lower()}]
+    if payload.email:
+        checks.append({"email": payload.email.lower()})
+    exists = await User.find_one({"$or": checks})
     if exists:
         raise HTTPException(status_code=400, detail="Email or username already exists")
     user = User(
         name=payload.name,
-        email=payload.email.lower(),
+        email=payload.email.lower() if payload.email else None,
         username=payload.username.lower(),
         password_hash=hash_password(payload.password),
         role=payload.role,

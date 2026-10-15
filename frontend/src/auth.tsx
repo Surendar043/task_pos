@@ -7,6 +7,7 @@ interface AuthState {
   user: User | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<User>;
+  signup: (data: { username: string; name: string; password: string; mobile: string; role: "admin" | "staff" }) => Promise<User>;
   logout: () => void;
 }
 
@@ -35,12 +36,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return res.user;
   };
 
+  const signup = async (data: { username: string; name: string; password: string; mobile: string; role: "admin" | "staff" }) => {
+    const res = await authApi.signup(data);
+    tokenStore.set(res.access_token);
+    setUser(res.user);
+    return res.user;
+  };
+
   const logout = () => {
     tokenStore.clear();
     setUser(null);
   };
 
-  return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, login, signup, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

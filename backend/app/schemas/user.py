@@ -8,7 +8,7 @@ from app.schemas.common import ObjectIdStr, ORMModel
 
 class UserCreate(ORMModel):
     name: str
-    email: EmailStr
+    email: EmailStr | None = None
     username: str
     password: str = Field(min_length=4)
     role: Literal["admin", "staff"] = "staff"
@@ -28,7 +28,7 @@ class UserUpdate(ORMModel):
 class UserOut(ORMModel):
     id: ObjectIdStr
     name: str
-    email: EmailStr
+    email: EmailStr | None = None
     username: str
     role: Literal["admin", "staff"]
     phone: str | None = None

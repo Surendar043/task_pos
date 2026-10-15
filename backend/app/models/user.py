@@ -9,7 +9,7 @@ from app.models.base import utcnow
 
 class User(Document):
     name: str
-    email: Indexed(EmailStr, unique=True)  # type: ignore[valid-type]
+    email: EmailStr | None = None
     username: Indexed(str, unique=True)  # type: ignore[valid-type]
     password_hash: str
     role: Literal["admin", "staff"] = "staff"
