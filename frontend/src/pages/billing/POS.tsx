@@ -155,15 +155,35 @@ export default function POS() {
             <EmptyState title="No products" description="Try a different search or category." />
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {filtered.map((product) => (
-                <button
-                  key={product.id}
-                  onClick={() => addToCart(product)}
-                  disabled={product.stock_qty <= 0}
-                  className={cn(
-                    "flex flex-col min-h-[140px] rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-indigo-400 hover:shadow-sm disabled:opacity-50",
-                  )}
-                >
+              {filtered.map((product) => {
+                const hasInStockVariant = product.variants.some(
+                  (v) => (v.stock_qty ?? 0) > 0,
+                );
+                return (
+                  <button
+                    key={product.id}
+                    onClick={() => {
+                      // Products with size/color variants require an explicit
+                      // variant choice so the shopper can see and select one.
+                      if (product.variants.length > 0) {
+                        if (hasInStockVariant) {
+                          setVariantProduct(product);
+                        } else {
+                          setMessage(`${product.name} is out of stock`);
+                        }
+                      } else {
+                        addToCart(product);
+                      }
+                    }}
+                    disabled={
+                      product.variants.length > 0
+                        ? !hasInStockVariant
+                        : product.stock_qty <= 0
+                    }
+                    className={cn(
+                      "flex flex-col min-h-[140px] rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-indigo-400 hover:shadow-sm disabled:opacity-50",
+                    )}
+                  >
                   <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-sm font-semibold text-indigo-600">
                     {product.name.charAt(0)}
                   </div>
@@ -174,7 +194,8 @@ export default function POS() {
                     <Badge tone={product.stock_qty <= product.reorder_level ? "amber" : "slate"}>{product.stock_qty} {product.unit}</Badge>
                   </div>
                 </button>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
