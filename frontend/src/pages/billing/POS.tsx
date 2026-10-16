@@ -1,4 +1,4 @@
-import { Minus, Plus, Printer, ScanLine, Search, ShoppingCart, Trash2, X } from "lucide-react";
+import { Minus, Plus, Printer, RotateCw, ScanLine, Search, ShoppingCart, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { apiErrorMessage, categoriesApi, productsApi, salesApi } from "../../api";
 import { useAuth } from "../../auth";
@@ -18,6 +18,7 @@ export default function POS() {
   const [orderDiscount, setOrderDiscount] = useState(0);
   const [customerName, setCustomerName] = useState("");
   const [variantProduct, setVariantProduct] = useState<Product | null>(null);
+  const [editVariantLine, setEditVariantLine] = useState<CartLine | null>(null);
   const [payOpen, setPayOpen] = useState(false);
   const [receipt, setReceipt] = useState<Sale | null>(null);
   const [message, setMessage] = useState("");
@@ -47,22 +48,29 @@ export default function POS() {
   }, [products, search, categoryId]);
 
   const addToCart = (product: Product, variantSku?: string | null) => {
-    if (product.stock_qty <= 0) {
+    let resolvedSku = variantSku ?? null;
+    let info = "";
+
+    if (product.variants.length > 0) {
+      // Variant products need a specific in-stock size/color variant.
+      const variant = resolvedSku ? product.variants.find((v) => v.sku === resolvedSku) : undefined;
+      if (!variant || (variant.stock_qty ?? 0) <= 0) {
+        // Requested variant is missing or out of stock: auto-pick the first in-stock variant.
+        const inStock = product.variants.find((v) => (v.stock_qty ?? 0) > 0);
+        if (!inStock) {
+          setMessage(`${product.name} is out of stock`);
+          return;
+        }
+        resolvedSku = inStock.sku;
+        if (variant) {
+          const label = [variant.size, variant.color].filter(Boolean).join(" / ") || variant.sku;
+          const picked = [inStock.size, inStock.color].filter(Boolean).join(" / ") || inStock.sku;
+          info = `${label} is out of stock; added ${picked} instead`;
+        }
+      }
+    } else if (product.stock_qty <= 0) {
       setMessage(`${product.name} is out of stock`);
       return;
-    }
-
-    // Resolve variant for products that have size/color variants.
-    // Auto-select the first in-stock variant so a single click adds to cart,
-    // matching the barcode-scan behaviour. If no variant has stock, report out of stock.
-    let resolvedSku = variantSku;
-    if (product.variants.length > 0 && !resolvedSku) {
-      const inStockVariant = product.variants.find((v) => (v.stock_qty ?? 0) > 0);
-      if (!inStockVariant) {
-        setMessage(`${product.name} is out of stock`);
-        return;
-      }
-      resolvedSku = inStockVariant.sku;
     }
 
     const key = cartKey(product.id, resolvedSku);
@@ -75,7 +83,23 @@ export default function POS() {
       }
       return [...prev, { product, variantSku: resolvedSku, qty: 1, unitPrice: product.selling_price, discount: 0 }];
     });
-    setMessage("");
+    setMessage(info);
+  };
+
+  const changeLineVariant = (line: CartLine, newSku: string) => {
+    setCart((prev) => {
+      const withoutOld = prev.filter(
+        (l) => cartKey(l.product.id, l.variantSku) !== cartKey(line.product.id, line.variantSku),
+      );
+      const key = cartKey(line.product.id, newSku);
+      const existing = withoutOld.find((l) => cartKey(l.product.id, l.variantSku) === key);
+      if (existing) {
+        return withoutOld.map((l) =>
+          cartKey(l.product.id, l.variantSku) === key ? { ...l, qty: l.qty + line.qty } : l,
+        );
+      }
+      return [...withoutOld, { ...line, variantSku: newSku }];
+    });
   };
 
   const setQty = (line: CartLine, qty: number) => {
@@ -227,7 +251,22 @@ export default function POS() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-slate-700">{line.product.name}</p>
-                      {line.variantSku && <p className="text-xs text-slate-400">{line.variantSku}</p>}
+                      {line.variantSku && (
+                        <div className="flex items-center gap-1">
+                          <p className="text-xs text-slate-400">{line.variantSku}</p>
+                          <button
+                            type="button"
+                            className="text-xs text-indigo-600 underline underline-offset-4 hover:text-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              setEditVariantLine(line);
+                              setVariantProduct(line.product);
+                            }}
+                            disabled={line.product.variants.length === 0}
+                          >
+                            Change variant
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <button className="text-slate-400 hover:text-rose-600" onClick={() => removeLine(line)}>
                       <Trash2 size={15} />
@@ -281,7 +320,12 @@ export default function POS() {
           product={variantProduct}
           onClose={() => setVariantProduct(null)}
           onPick={(sku) => {
-            addToCart(variantProduct, sku);
+            if (editVariantLine) {
+              changeLineVariant(editVariantLine, sku);
+              setEditVariantLine(null);
+            } else {
+              addToCart(variantProduct, sku);
+            }
             setVariantProduct(null);
           }}
         />
@@ -347,6 +391,9 @@ function Line({ label, value }: { label: string; value: string }) {
 }
 
 function VariantPicker({ product, onClose, onPick }: { product: Product; onClose: () => void; onPick: (sku: string) => void }) {
+  if (product.variants.length === 0) {
+    return null;
+  }
   return (
     <Modal open title={`Choose variant — ${product.name}`} onClose={onClose}>
       <div className="grid grid-cols-2 gap-2">
